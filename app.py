@@ -5,13 +5,12 @@ AI Face Analyzer — Жасанды интеллектпен бет талдау
 """
  
 import streamlit as st
-from streamlit_webrtc import webrtc_streamer, RTCConfiguration, VideoTransformerBase, WebRtcMode
-import av
 import torch
 import cv2
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 import pandas as pd
+import io
  
 st.set_page_config(
     page_title="AI Face Analyzer | Жаңыл Мырзақұл",
@@ -81,20 +80,6 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
  
-# STUN/TURN серверлері
-RTC_CONFIGURATION = RTCConfiguration({
-    "iceServers": [
-        {"urls": ["stun:stun.l.google.com:19302"]},
-        {"urls": ["stun:stun1.l.google.com:19302"]},
-        {"urls": ["stun:stun2.l.google.com:19302"]},
-        {"urls": ["stun:stun3.l.google.com:19302"]},
-        {"urls": ["stun:stun4.l.google.com:19302"]},
-        {"urls": ["turn:openrelay.metered.ca:80"], "username": "openrelayproject", "credential": "openrelayproject"},
-        {"urls": ["turn:openrelay.metered.ca:443"], "username": "openrelayproject", "credential": "openrelayproject"},
-        {"urls": ["turn:openrelay.metered.ca:443?transport=tcp"], "username": "openrelayproject", "credential": "openrelayproject"}
-    ]
-})
- 
  
 @st.cache_resource
 def load_model():
@@ -154,6 +139,57 @@ def predict_age_gender(face_img, model, device):
         return None, None
  
  
+def draw_results_pil(img_bgr, boxes, results):
+    """PIL қолдану — қазақ әріптерін дұрыс көрсетеді"""
+    img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
+    pil_img = Image.fromarray(img_rgb)
+    draw = ImageDraw.Draw(pil_img)
+    
+    # Қаріп өлшемі (суреттің енінің 4%-ы)
+    font_size = max(20, int(pil_img.width * 0.035))
+    
+    try:
+        # Streamlit Cloud-та DejaVu болады (қазақ әріптерін қолдайды)
+        font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", font_size)
+    except:
+        try:
+            font = ImageFont.truetype("DejaVuSans-Bold.ttf", font_size)
+        except:
+            font = ImageFont.load_default()
+    
+    for box, result in zip(boxes, results):
+        x1, y1, x2, y2 = box
+        age = result["age"]
+        gender = result["gender"]
+        
+        # Рамка
+        for offset in range(3):
+            draw.rectangle([x1-offset, y1-offset, x2+offset, y2+offset], outline=(50, 100, 255))
+        
+        # Жазу
+        label = f"{gender}, {age} жас"
+        
+        # Жазудың өлшемі
+        try:
+            bbox = draw.textbbox((0, 0), label, font=font)
+            text_w = bbox[2] - bbox[0]
+            text_h = bbox[3] - bbox[1]
+        except:
+            text_w, text_h = font.getsize(label) if hasattr(font, 'getsize') else (200, 30)
+        
+        # Фон
+        padding = 8
+        draw.rectangle(
+            [x1, y1 - text_h - padding * 2, x1 + text_w + padding * 2, y1],
+            fill=(50, 100, 255)
+        )
+        
+        # Мәтін
+        draw.text((x1 + padding, y1 - text_h - padding), label, fill="white", font=font)
+    
+    return np.array(pil_img)
+ 
+ 
 # БҮЙІРЛІК МЕНЮ
 with st.sidebar:
     st.markdown("# 🧠 AI Face Analyzer")
@@ -183,7 +219,7 @@ if page == "🏠 Басты бет":
     col1, col2, col3 = st.columns(3)
     with col1:
         st.markdown("""<div class="feature-card"><h3>📷 Камера</h3>
-        <p>Нақты уақытта бейнекамера арқылы жас пен жынысты анықтау</p></div>""", unsafe_allow_html=True)
+        <p>Камерадан сурет түсіріп, жас пен жынысты анықтау</p></div>""", unsafe_allow_html=True)
     with col2:
         st.markdown("""<div class="feature-card"><h3>🖼️ Сурет</h3>
         <p>Жүктелген суреттен бетті табу және талдау жасау</p></div>""", unsafe_allow_html=True)
@@ -234,62 +270,77 @@ elif page == "👤 Жас пен жынысты анықтау":
     st.success(f"✅ Модель дайын! Құрылғы: **{device}**")
     
     mode = st.radio("🎯 **Режимді таңдаңыз:**",
-        ["📷 Камера (нақты уақыт)", "🖼️ Сурет жүктеу"], horizontal=True)
+        ["📷 Камерадан сурет", "🖼️ Сурет жүктеу"], horizontal=True)
     
     st.markdown("---")
     
-    if mode == "📷 Камера (нақты уақыт)":
-        st.markdown("### 🎥 Тікелей бейне")
+    # Жалпы талдау функциясы
+    def analyze_image(image):
+        img_array = np.array(image)
+        if len(img_array.shape) == 3 and img_array.shape[2] == 4:
+            img_array = cv2.cvtColor(img_array, cv2.COLOR_RGBA2RGB)
+        if len(img_array.shape) == 3:
+            img_bgr = cv2.cvtColor(img_array, cv2.COLOR_RGB2BGR)
+        else:
+            img_bgr = img_array
+        
+        boxes = detect_faces(img_bgr, face_net)
+        
+        if not boxes:
+            return None, []
+        
+        results = []
+        for box in boxes:
+            x1, y1, x2, y2 = box
+            x1, y1 = max(0, x1), max(0, y1)
+            x2 = min(img_bgr.shape[1], x2)
+            y2 = min(img_bgr.shape[0], y2)
+            face = img_bgr[y1:y2, x1:x2]
+            if face.size == 0:
+                results.append({"age": None, "gender": None})
+                continue
+            age, gender = predict_age_gender(face, model, device)
+            results.append({"age": age, "gender": gender})
+        
+        # Қазақ әріптерімен салу (PIL)
+        valid_results = [r for r in results if r["age"] is not None]
+        valid_boxes = [b for b, r in zip(boxes, results) if r["age"] is not None]
+        
+        if valid_results:
+            result_img = draw_results_pil(img_bgr, valid_boxes, valid_results)
+        else:
+            result_img = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
+        
+        return result_img, valid_results
+    
+    if mode == "📷 Камерадан сурет":
+        st.markdown("### 📷 Камерадан сурет түсіру")
         st.markdown("""<div class="info-box">
-        <p>📌 <b>"START"</b> батырмасын басыңыз, камераға рұқсат беріңіз. 
-        Бет аумағы көк рамкамен қоршалады, төбесінде жас пен жыныс жазылады.</p>
+        <p>📌 Төмендегі камера батырмасын басып, бетіңізді көрсетіңіз. Сурет автоматты түрде талданады.</p>
         </div>""", unsafe_allow_html=True)
         
-        class VideoProcessor(VideoTransformerBase):
-            def __init__(self):
-                self.model = model
-                self.device = device
-                self.face_net = face_net
+        camera_image = st.camera_input("📸 Сурет түсіру")
+        
+        if camera_image is not None:
+            image = Image.open(camera_image)
             
-            def recv(self, frame):
-                img = frame.to_ndarray(format="bgr24")
-                try:
-                    boxes = detect_faces(img, self.face_net)
-                    for box in boxes:
-                        x1, y1, x2, y2 = box
-                        x1, y1 = max(0, x1), max(0, y1)
-                        x2 = min(img.shape[1], x2)
-                        y2 = min(img.shape[0], y2)
-                        face = img[y1:y2, x1:x2]
-                        if face.size == 0:
-                            continue
-                        age, gender = predict_age_gender(face, self.model, self.device)
-                        if age is not None:
-                            cv2.rectangle(img, (x1, y1), (x2, y2), (255, 100, 50), 3)
-                            label = f"{gender}, {age} жас"
-                            (lw, lh), _ = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.8, 2)
-                            cv2.rectangle(img, (x1, y1 - lh - 15), (x1 + lw + 10, y1), (255, 100, 50), -1)
-                            cv2.putText(img, label, (x1 + 5, y1 - 8),
-                                        cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2)
-                except Exception:
-                    pass
-                return av.VideoFrame.from_ndarray(img, format="bgr24")
-        
-        webrtc_streamer(
-            key="age-gender-detection",
-            mode=WebRtcMode.SENDRECV,
-            rtc_configuration=RTC_CONFIGURATION,
-            video_processor_factory=VideoProcessor,
-            media_stream_constraints={"video": True, "audio": False},
-            async_processing=True,
-        )
-        
-        st.markdown("""<div class="info-box"><h4>💡 Камера жұмыс істемесе:</h4><ul>
-        <li>Браузерге камераға рұқсат бергеніңізді тексеріңіз</li>
-        <li>Chrome немесе Firefox қолданыңыз (Safari кейде проблема)</li>
-        <li>Бетті жаңартып көріңіз (Cmd+Shift+R)</li>
-        <li>Әлде "Сурет жүктеу" режимін пайдаланыңыз</li>
-        </ul></div>""", unsafe_allow_html=True)
+            with st.spinner("🔍 Талдау жүруде..."):
+                result_img, results = analyze_image(image)
+            
+            if result_img is None or not results:
+                st.warning("⚠️ Бет табылмады. Бетіңізді анық көрсетіңіз.")
+            else:
+                st.image(result_img, caption="✅ Нәтиже", use_container_width=True)
+                
+                st.markdown("### 📊 Талдау нәтижесі")
+                for i, r in enumerate(results, 1):
+                    col1, col2, col3 = st.columns(3)
+                    with col1:
+                        st.markdown(f'<div class="metric-card"><div class="metric-label">Бет #{i}</div><div class="metric-value">👤</div></div>', unsafe_allow_html=True)
+                    with col2:
+                        st.markdown(f'<div class="metric-card"><div class="metric-label">Жасы</div><div class="metric-value">{r["age"]}</div></div>', unsafe_allow_html=True)
+                    with col3:
+                        st.markdown(f'<div class="metric-card"><div class="metric-label">Жынысы</div><div class="metric-value">{r["gender"]}</div></div>', unsafe_allow_html=True)
     
     else:
         st.markdown("### 🖼️ Сурет жүктеу")
@@ -297,40 +348,15 @@ elif page == "👤 Жас пен жынысты анықтау":
         
         if uploaded_file is not None:
             image = Image.open(uploaded_file)
-            img_array = np.array(image)
-            if len(img_array.shape) == 3:
-                img_bgr = cv2.cvtColor(img_array, cv2.COLOR_RGB2BGR)
-            else:
-                img_bgr = img_array
             
-            boxes = detect_faces(img_bgr, face_net)
+            with st.spinner("🔍 Талдау жүруде..."):
+                result_img, results = analyze_image(image)
             
-            if not boxes:
+            if result_img is None or not results:
                 st.warning("⚠️ Суретте бет табылмады. Бет анық көрінетін суретті жүктеңіз.")
                 st.image(image, caption="Жүктелген сурет", use_container_width=True)
             else:
-                result_img = img_bgr.copy()
-                results = []
-                for box in boxes:
-                    x1, y1, x2, y2 = box
-                    x1, y1 = max(0, x1), max(0, y1)
-                    x2 = min(img_bgr.shape[1], x2)
-                    y2 = min(img_bgr.shape[0], y2)
-                    face = img_bgr[y1:y2, x1:x2]
-                    if face.size == 0:
-                        continue
-                    age, gender = predict_age_gender(face, model, device)
-                    if age is not None:
-                        results.append({"age": age, "gender": gender})
-                        cv2.rectangle(result_img, (x1, y1), (x2, y2), (255, 100, 50), 3)
-                        label = f"{gender}, {age} жас"
-                        (lw, lh), _ = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.8, 2)
-                        cv2.rectangle(result_img, (x1, y1 - lh - 15), (x1 + lw + 10, y1), (255, 100, 50), -1)
-                        cv2.putText(result_img, label, (x1 + 5, y1 - 8),
-                                    cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2)
-                
-                result_rgb = cv2.cvtColor(result_img, cv2.COLOR_BGR2RGB)
-                st.image(result_rgb, caption="✅ Нәтиже", use_container_width=True)
+                st.image(result_img, caption="✅ Нәтиже", use_container_width=True)
                 
                 st.markdown("### 📊 Талдау нәтижесі")
                 for i, r in enumerate(results, 1):
