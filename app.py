@@ -281,7 +281,7 @@ if page == "🏠 Басты бет":
         </div>
         """, unsafe_allow_html=True)
     
-    st.markdown("## 📈 Жоба статистикасы")
+    st.markdown("## 📈 Дипломдық жұмыс статистикасы")
     col1, col2, col3, col4 = st.columns(4)
     with col1:
         st.markdown('<div class="metric-card"><div class="metric-value">85%</div><div class="metric-label">Модель дәлдігі</div></div>', unsafe_allow_html=True)
