@@ -1,7 +1,9 @@
 streamlit
+streamlit-webrtc
 torch
 torchvision
 opencv-python-headless
 pillow
 numpy
+av
 pandas
