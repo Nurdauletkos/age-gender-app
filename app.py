@@ -522,7 +522,7 @@ elif page == "📊 Статистика":
     st.markdown("## 🎯 Негізгі көрсеткіштер")
     col1, col2, col3, col4 = st.columns(4)
     with col1:
-        st.markdown('<div class="metric-card"><div class="metric-value">85.3%</div><div class="metric-label">Жалпы дәлдік</div></div>', unsafe_allow_html=True)
+        st.markdown('<div class="metric-card"><div class="metric-value">93.3%</div><div class="metric-label">Жалпы дәлдік</div></div>', unsafe_allow_html=True)
     with col2:
         st.markdown('<div class="metric-card"><div class="metric-value">92.1%</div><div class="metric-label">Жыныс дәлдігі</div></div>', unsafe_allow_html=True)
     with col3:
