@@ -242,7 +242,7 @@ if page == "🏠 Басты бет":
     st.markdown("""
     <div class="hero-block">
         <h1>🧠 AI Face Analyzer</h1>
-        <h3 style="color:white; opacity:0.95;">Жасанды интеллектпен жас пен жынысты анықтау</h3>
+        <h3 style="color:white; opacity:0.95;">Нейронды желілер негізінде адамның белгілі сипаттамаларын анықтау</h3>
         <p style="font-size:18px; margin-top:20px;">
             🎓 Мектеп оқушыларына арналған білім беретін жұмыс
         </p>
@@ -266,7 +266,7 @@ if page == "🏠 Басты бет":
         st.markdown("""
         <div class="feature-card">
             <h3>🖼️ Сурет</h3>
-            <p>Жүктелген суреттен бетті табу 
+            <p>Жүктелген бейнеден бетті табу 
             және талдау жасау</p>
         </div>
         """, unsafe_allow_html=True)
