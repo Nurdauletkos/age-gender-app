@@ -540,7 +540,7 @@ elif page == "📊 Статистика":
         val_loss = [3.5 * np.exp(-x/30) + 0.45 + np.random.uniform(-0.08, 0.08) for x in epochs]
         df_loss = pd.DataFrame({"Train Loss": train_loss, "Val Loss": val_loss}, index=epochs)
         st.line_chart(df_loss)
-        st.caption("💡 Loss төмендеген сайын модель жақсы үйренді")
+        st.caption("💡 Қателік төмендеген сайын модель жақсы үйренді")
     
     with col2:
         st.markdown("### 📈 Accuracy (дәлдік)")
@@ -549,7 +549,7 @@ elif page == "📊 Статистика":
         val_acc = [min(88, 25 + x * 0.65 + np.random.uniform(-1.5, 1.5)) for x in epochs]
         df_acc = pd.DataFrame({"Train Accuracy": train_acc, "Val Accuracy": val_acc}, index=epochs)
         st.line_chart(df_acc)
-        st.caption("💡 Accuracy жоғарылаған сайын модель дұрыс болжайды")
+        st.caption("💡 Дәлдік жоғарылаған сайын модель дұрыс болжайды")
     
     st.markdown("## 📦 Қолданылған деректер")
     col1, col2, col3 = st.columns(3)
@@ -626,8 +626,8 @@ elif page == "👨‍💻 Автор туралы":
         st.markdown("""
         <div class="feature-card">
             <h3>🌟 Дипломдық жұмыстың маңызы</h3>
-            <p>Қазақ тілінде <b>AI білім беруге арналған</b> аз ресурс бар. 
-            Бұл жұмыс мектеп оқушыларына нейрон желілерді 
+            <p>Қазақ тілінде <b>Жасанды интеллект бойынша білім беруге арналған</b> аз ресурс бар. 
+            Бұл жұмыс мектеп оқушыларына нейрондық желілерді 
             <b>қарапайым тілмен</b> түсіндіреді.</p>
         </div>
         """, unsafe_allow_html=True)
