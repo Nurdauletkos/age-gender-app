@@ -17,7 +17,6 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
- HERO_IMAGE_PATH = "banner.png"
 # --- ДИЗАЙН (CSS) ---
 st.markdown("""
 <style>
