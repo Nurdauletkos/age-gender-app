@@ -12,7 +12,7 @@ import pandas as pd
  
 # --- 1. ПАРАҚША БАПТАУЛАРЫ ---
 st.set_page_config(
-    page_title="AI Face Analyzer | Жаңыл Мырзақұл",
+    page_title="NeuroVision | Жаңыл Мырзақұл",
     page_icon="🧠",
     layout="wide",
     initial_sidebar_state="expanded"
