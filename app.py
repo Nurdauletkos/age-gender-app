@@ -205,7 +205,7 @@ def process_frame(img_array):
  
 # БҮЙІРЛІК МЕНЮ
 with st.sidebar:
-    st.markdown("# 🧠 AI Face Analyzer")
+    st.markdown("# 🧠 NeuroVision")
     st.markdown("---")
     
     page = st.radio(
