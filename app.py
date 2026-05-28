@@ -667,11 +667,10 @@ elif page == "👨‍💻 Автор туралы":
             Бұл жұмыс мектеп оқушыларына нейрондық желілерді 
             <b>қарапайым тілмен</b> түсіндіреді.</p>
         </div>
-        """, unsafe_allow_html=True)
+""", unsafe_allow_html=True)
     
-   st.markdown("## 🛠 Қолданылған технологиялар")
-    
-    # 1-қатар
+st.markdown("## 🛠 Қолданылған технологиялар")
+
     col1, col2, col3, col4 = st.columns(4)
     with col1:
         st.markdown('<div class="metric-card"><h3>🐍 Python</h3><p>Негізгі бағдарламалау тілі</p></div>', unsafe_allow_html=True)
@@ -681,8 +680,7 @@ elif page == "👨‍💻 Автор туралы":
         st.markdown('<div class="metric-card"><h3>📷 OpenCV</h3><p>Компьютерлік көру</p></div>', unsafe_allow_html=True)
     with col4:
         st.markdown('<div class="metric-card"><h3>🎨 Streamlit</h3><p>Веб интерфейс</p></div>', unsafe_allow_html=True)
-    
-    # 2-қатар
+
     col1, col2, col3, col4 = st.columns(4)
     with col1:
         st.markdown('<div class="metric-card"><h3>🧠 CNN</h3><p>Конволюциялық нейрон желі</p></div>', unsafe_allow_html=True)
