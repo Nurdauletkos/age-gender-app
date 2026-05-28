@@ -671,7 +671,7 @@ elif page == "👨‍💻 Автор туралы":
     
 st.markdown("## 🛠 Қолданылған технологиялар")
 
-   col1, col2, col3, col4 = st.columns(4)
+     col1, col2, col3, col4 = st.columns(4)
     with col1:
         st.markdown('<div class="metric-card"><h3>🐍 Python</h3><p>Негізгі бағдарламалау тілі</p></div>', unsafe_allow_html=True)
     with col2:
@@ -681,7 +681,7 @@ st.markdown("## 🛠 Қолданылған технологиялар")
     with col4:
         st.markdown('<div class="metric-card"><h3>🎨 Streamlit</h3><p>Веб интерфейс</p></div>', unsafe_allow_html=True)
 
-   col1, col2, col3, col4 = st.columns(4)
+     col1, col2, col3, col4 = st.columns(4)
     with col1:
         st.markdown('<div class="metric-card"><h3>🧠 CNN</h3><p>Конволюциялық нейрон желі</p></div>', unsafe_allow_html=True)
     with col2:
