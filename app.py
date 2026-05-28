@@ -670,26 +670,15 @@ elif page == "👨‍💻 Автор туралы":
 """, unsafe_allow_html=True)
     
 st.markdown("## 🛠 Қолданылған технологиялар")
-
-     col1, col2, col3, col4 = st.columns(4)
+    col1, col2, col3, col4 = st.columns(4)
     with col1:
-        st.markdown('<div class="metric-card"><h3>🐍 Python</h3><p>Негізгі бағдарламалау тілі</p></div>', unsafe_allow_html=True)
+        st.markdown('<div class="metric-card"><h3>🐍 Python</h3><p>Негізгі тіл</p></div>', unsafe_allow_html=True)
     with col2:
-        st.markdown('<div class="metric-card"><h3>🔥 PyTorch</h3><p>Терең оқыту фреймворкі</p></div>', unsafe_allow_html=True)
+        st.markdown('<div class="metric-card"><h3>🔥 PyTorch</h3><p>ML фреймворк</p></div>', unsafe_allow_html=True)
     with col3:
-        st.markdown('<div class="metric-card"><h3>📷 OpenCV</h3><p>Компьютерлік көру</p></div>', unsafe_allow_html=True)
+        st.markdown('<div class="metric-card"><h3>📷 OpenCV</h3><p>Сурет өңдеу</p></div>', unsafe_allow_html=True)
     with col4:
         st.markdown('<div class="metric-card"><h3>🎨 Streamlit</h3><p>Веб интерфейс</p></div>', unsafe_allow_html=True)
-
-     col1, col2, col3, col4 = st.columns(4)
-    with col1:
-        st.markdown('<div class="metric-card"><h3>🧠 CNN</h3><p>Конволюциялық нейрон желі</p></div>', unsafe_allow_html=True)
-    with col2:
-        st.markdown('<div class="metric-card"><h3>🏗 ResNet-18</h3><p>Backbone архитектурасы</p></div>', unsafe_allow_html=True)
-    with col3:
-        st.markdown('<div class="metric-card"><h3>🔢 NumPy</h3><p>Сандық есептеулер</p></div>', unsafe_allow_html=True)
-    with col4:
-        st.markdown('<div class="metric-card"><h3>☁️ Streamlit Cloud</h3><p>Облактық хостинг</p></div>', unsafe_allow_html=True)
     
     st.markdown("## 📅 Дипломдық жұмыс этаптары")
     st.markdown("""
