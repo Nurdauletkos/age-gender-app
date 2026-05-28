@@ -667,9 +667,9 @@ elif page == "👨‍💻 Автор туралы":
             Бұл жұмыс мектеп оқушыларына нейрондық желілерді 
             <b>қарапайым тілмен</b> түсіндіреді.</p>
         </div>
-""", unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
     
-st.markdown("## 🛠 Қолданылған технологиялар")
+    st.markdown("## 🛠 Қолданылған технологиялар")
     col1, col2, col3, col4 = st.columns(4)
     with col1:
         st.markdown('<div class="metric-card"><h3>🐍 Python</h3><p>Негізгі тіл</p></div>', unsafe_allow_html=True)
