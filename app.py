@@ -252,29 +252,67 @@ if page == "🏠 Басты бет":
     
     st.markdown("## 🚀 Жүйенің негізгі мүмкіндіктері")
     
-    col1, col2, col3 = st.columns(3)
+    st.markdown("## 🚀 Жүйенің негізгі мүмкіндіктері")
+    
+    # 1-қатар
+    col1, col2, col3, col4 = st.columns(4)
     with col1:
         st.markdown("""
         <div class="feature-card">
-            <h3>📷 Камера</h3>
-            <p>Нақты уақытта бейнекамера арқылы 
-            жас пен жынысты анықтау</p>
+            <h3>👤 Жас анықтау</h3>
+            <p>Бір және бірнеше адамның жасын анықтау</p>
         </div>
         """, unsafe_allow_html=True)
     with col2:
         st.markdown("""
         <div class="feature-card">
-            <h3>🖼️ Сурет</h3>
-            <p>Жүктелген бейнеден бетті табу 
-            және талдау жасау</p>
+            <h3>⚧ Жыныс анықтау</h3>
+            <p>Бір және бірнеше адамның жынысын анықтау</p>
         </div>
         """, unsafe_allow_html=True)
     with col3:
         st.markdown("""
         <div class="feature-card">
-            <h3>🤖 Нейрондық желі</h3>
-            <p>Терең оқыту көмегімен жоғары 
-            дәлдікпен болжау</p>
+            <h3>📹 Онлайн режим</h3>
+            <p>Нақты уақытта бейнекамера арқылы талдау</p>
+        </div>
+        """, unsafe_allow_html=True)
+    with col4:
+        st.markdown("""
+        <div class="feature-card">
+            <h3>🖼️ Сурет жүктеу</h3>
+            <p>Жүктелген суреттен бетті талдау</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # 2-қатар
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        st.markdown("""
+        <div class="feature-card">
+            <h3>👁 Назар анықтау</h3>
+            <p>Пайдаланушының назарын бақылау</p>
+        </div>
+        """, unsafe_allow_html=True)
+    with col2:
+        st.markdown("""
+        <div class="feature-card">
+            <h3>😊 Эмоция анықтау</h3>
+            <p>Бет әлпеті бойынша эмоцияны анықтау</p>
+        </div>
+        """, unsafe_allow_html=True)
+    with col3:
+        st.markdown("""
+        <div class="feature-card">
+            <h3>📚 Оқыту бөлімі</h3>
+            <p>Нейрон желі қалай жұмыс істейтінін үйрену</p>
+        </div>
+        """, unsafe_allow_html=True)
+    with col4:
+        st.markdown("""
+        <div class="feature-card">
+            <h3>📊 Статистика</h3>
+            <p>Модель дәлдігі мен оқыту графиктері</p>
         </div>
         """, unsafe_allow_html=True)
     
@@ -283,11 +321,11 @@ if page == "🏠 Басты бет":
     with col1:
         st.markdown('<div class="metric-card"><div class="metric-value">93.3%</div><div class="metric-label">Модель дәлдігі</div></div>', unsafe_allow_html=True)
     with col2:
-        st.markdown('<div class="metric-card"><div class="metric-value">50K+</div><div class="metric-label">Оқыту суреттері</div></div>', unsafe_allow_html=True)
+        st.markdown('<div class="metric-card"><div class="metric-value">50мың+</div><div class="metric-label">Оқыту суреттері</div></div>', unsafe_allow_html=True)
     with col3:
-        st.markdown('<div class="metric-card"><div class="metric-value">100</div><div class="metric-label">Оқыту эпохасы</div></div>', unsafe_allow_html=True)
+        st.markdown('<div class="metric-card"><div class="metric-value">110</div><div class="metric-label">Оқыту эпохасы</div></div>', unsafe_allow_html=True)
     with col4:
-        st.markdown('<div class="metric-card"><div class="metric-value">2</div><div class="metric-label">Тапсырма</div></div>', unsafe_allow_html=True)
+        st.markdown('<div class="metric-card"><div class="metric-value">16</div><div class="metric-label">Тапсырма</div></div>', unsafe_allow_html=True)
     
     st.markdown("## 🔍 Жүйенің мүмкіндіктері")
     col1, col2 = st.columns(2)
